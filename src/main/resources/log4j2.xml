@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Configuration status="DEBUG">
+    <Appenders>
+        <Console name="stdout" target="SYSTEM_OUT">
+            <PatternLayout pattern="%d{yyyy-MM-dd'T'HH:mm:ss.SSSZ} %-5p | RID:%X{RID} | [%-7t] %F:%L - %m%n"/>
+        </Console>
+    </Appenders>
+    <Loggers>
+        <Root level="INFO">
+            <AppenderRef ref="stdout"/>
+        </Root>
+        <Logger name="com.amberlight" level="debug" additivity="false">
+            <AppenderRef ref="stdout" />
+        </Logger>
+    </Loggers>
+</Configuration>

@@ -17,6 +17,6 @@ after_success:
 
   # WALLET SERVICE
   - export WALLET=amberlight303/wallet
-  - docker build -t $WALLET:$COMMIT ./wallet
+  - docker build -t $WALLET:$COMMIT ./
   - docker tag $WALLET:$COMMIT $WALLET:$TAG
   - docker push $WALLET

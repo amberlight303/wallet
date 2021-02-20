@@ -1,0 +1,13 @@
+version: '3.3'
+services:
+
+  wallet:
+    image: amberlight303/wallet:latest
+    restart: always
+    network_mode: host
+    ports:
+      - "8585:8585"
+    logging:
+      options:
+        max-size: "10m"
+        max-file: "10"

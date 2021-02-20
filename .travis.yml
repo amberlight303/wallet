@@ -1,0 +1,22 @@
+services:
+  - docker
+
+language: java
+jdk: oraclejdk11
+
+env:
+  global:
+    - COMMIT=${TRAVIS_COMMIT::7}
+
+after_success:
+
+  - docker login -u $DOCKER_USER -p $DOCKER_PASSWORD
+
+  #TAG
+  - export TAG=`if [ "$TRAVIS_BRANCH" == "master" ]; then echo "latest"; else echo $TRAVIS_BRANCH ; fi`
+
+  # WALLET SERVICE
+  - export WALLET=amberlight303/wallet
+  - docker build -t $WALLET:$COMMIT ./wallet
+  - docker tag $WALLET:$COMMIT $WALLET:$TAG
+  - docker push $WALLET

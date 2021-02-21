@@ -95,7 +95,7 @@ class WalletControllerTest {
 				.perform(MockMvcRequestBuilders.post(uri)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(requestBody))
-				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.status().isNoContent())
 				.andReturn();
 		verify(walletService, times(1)).debitWallet(any(TransactionDto.class));
 	}
@@ -195,7 +195,7 @@ class WalletControllerTest {
 				.perform(MockMvcRequestBuilders.post(uri)
 				.contentType(MediaType.APPLICATION_JSON)
 				.content(requestBody))
-				.andExpect(MockMvcResultMatchers.status().isOk())
+				.andExpect(MockMvcResultMatchers.status().isNoContent())
 				.andReturn();
 		verify(walletService, times(1)).creditWallet(any(TransactionDto.class));
 	}

@@ -6,6 +6,7 @@ import com.amberlight.wallet.model.dto.TransactionDto;
 import com.amberlight.wallet.service.IWalletService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -28,8 +29,9 @@ public class WalletController {
      * @return wallet
      */
     @GetMapping("/state")
-    public Wallet getWalletState(@RequestParam("playerId") Integer playerId) {
-        return walletService.getWalletByPlayerId(playerId);
+    public ResponseEntity<Wallet> getWalletState(@RequestParam("playerId") Integer playerId) {
+        Wallet wallet = walletService.getWalletByPlayerId(playerId);
+        return ResponseEntity.ok(wallet);
     }
 
     /**
@@ -38,8 +40,9 @@ public class WalletController {
      * @return transactions
      */
     @GetMapping("/transactions")
-    public List<Transaction> getTransactions(@RequestParam("walletId") Integer walletId) {
-        return walletService.getAllTransactionsByWalletId(walletId);
+    public ResponseEntity<List<Transaction>> getTransactions(@RequestParam("walletId") Integer walletId) {
+        List<Transaction> transactions = walletService.getAllTransactionsByWalletId(walletId);
+        return ResponseEntity.ok(transactions);
     }
 
     /**
@@ -47,8 +50,9 @@ public class WalletController {
      * @param transactionDto transaction DTO
      */
     @PostMapping("/debit")
-    public void debitWallet(@RequestBody @Valid TransactionDto transactionDto) {
+    public ResponseEntity<Void> debitWallet(@RequestBody @Valid TransactionDto transactionDto) {
         walletService.debitWallet(transactionDto);
+        return ResponseEntity.noContent().build();
     }
 
     /**
@@ -56,8 +60,9 @@ public class WalletController {
      * @param transactionDto transaction DTO
      */
     @PostMapping("/credit")
-    public void creditWallet(@RequestBody @Valid TransactionDto transactionDto) {
+    public ResponseEntity<Void> creditWallet(@RequestBody @Valid TransactionDto transactionDto) {
         walletService.creditWallet(transactionDto);
+        return ResponseEntity.noContent().build();
     }
 
 }

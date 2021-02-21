@@ -1,4 +1,5 @@
 [![Build Status](https://www.travis-ci.com/amberlight303/wallet.svg?branch=master)](https://www.travis-ci.com/amberlight303/wallet)
+
 #Wallet
 
 It's a simple java REST demo web app that implements wallet features. 

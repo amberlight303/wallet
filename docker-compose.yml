@@ -3,7 +3,6 @@ services:
 
   wallet:
     image: amberlight303/wallet:latest
-    restart: no
     network_mode: host
     ports:
       - "8585:8585"

@@ -45,7 +45,7 @@ public class WalletService implements IWalletService {
     @Transactional
     public void debitWallet(TransactionDto transactionDto) {
         log.info("Debit transaction starts: {}", transactionDto);
-        Wallet wallet = checkIfWalletExistsAndGet(transactionDto);
+        Wallet wallet = checkIfWalletExistsAndGetAndLock(transactionDto);
         checkIfTransactionDoesntExists(transactionDto);
         BigDecimal resultAmount = wallet.getBalance().subtract(transactionDto.getAmount());
         if (resultAmount.compareTo(BigDecimal.ZERO) < 0) {
@@ -63,7 +63,7 @@ public class WalletService implements IWalletService {
     @Transactional
     public void creditWallet(TransactionDto transactionDto) {
         log.info("Credit transaction starts: {}", transactionDto);
-        Wallet wallet = checkIfWalletExistsAndGet(transactionDto);
+        Wallet wallet = checkIfWalletExistsAndGetAndLock(transactionDto);
         checkIfTransactionDoesntExists(transactionDto);
         BigDecimal resultAmount = wallet.getBalance().add(transactionDto.getAmount());
         wallet.setBalance(resultAmount);
@@ -90,17 +90,18 @@ public class WalletService implements IWalletService {
 
     /**
      * Checks if the wallet exists, returns the wallet.
+     * Puts pessimistic lock on a wallet in the db to prevent concurrent updates.
      * @param transactionDto transaction DTO
      * @return wallet
      * @throws IllegalStateException in case if wallet doesn't exist
      */
-    private Wallet checkIfWalletExistsAndGet(TransactionDto transactionDto) {
-        Optional<Wallet> walletO = walletRepository.findById(transactionDto.getWalletId());
-        if (walletO.isEmpty()) {
+    private Wallet checkIfWalletExistsAndGetAndLock(TransactionDto transactionDto) {
+        Wallet wallet = walletRepository.findAndLockWalletById(transactionDto.getWalletId());
+        if (wallet == null) {
             throw new BusinessLogicException(String.format("A wallet with the id '%d' doesn't exist.",
                     transactionDto.getWalletId()));
         }
-        return walletO.get();
+        return wallet;
     }
 
     /**

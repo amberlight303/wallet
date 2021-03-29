@@ -74,7 +74,7 @@ public class WalletServiceTest {
         BigDecimal debitAmount = BigDecimal.valueOf(50);
         TransactionDto transactionDto = TransactionDto.builder().walletId(walletId).id(newTransactionId)
                                                       .amount(debitAmount).build();
-        when(walletRepository.findById(walletId)).thenReturn(Optional.empty());
+        when(walletRepository.findAndLockWalletById(walletId)).thenReturn(null);
         Exception e = assertThrows(BusinessLogicException.class, () -> {
             walletService.debitWallet(transactionDto);
         });
@@ -92,7 +92,7 @@ public class WalletServiceTest {
         TransactionDto debitTransactionDto = TransactionDto.builder().walletId(walletId).id(existingTransactionId)
                                                      .amount(debitAmount).build();
         Wallet existingWallet = Wallet.builder().id(walletId).balance(walletBalance).build();
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(existingWallet));
+        when(walletRepository.findAndLockWalletById(walletId)).thenReturn(existingWallet);
         Transaction existingTransaction =
                 Transaction.builder().id(existingTransactionId).amount(existingTransactionAmount).build();
         when(transactionRepository.findById(debitTransactionDto.getId())).thenReturn(Optional.of(existingTransaction));
@@ -112,7 +112,7 @@ public class WalletServiceTest {
         TransactionDto debitTransactionDto = TransactionDto.builder().walletId(walletId).id(uniqueTransactionId)
                                                      .amount(debitAmount).build();
         Wallet existingWallet = Wallet.builder().id(walletId).balance(walletBalance).build();
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(existingWallet));
+        when(walletRepository.findAndLockWalletById(walletId)).thenReturn(existingWallet);
         when(transactionRepository.findById(debitTransactionDto.getId())).thenReturn(Optional.empty());
         Exception e = assertThrows(BusinessLogicException.class, () -> {
             walletService.debitWallet(debitTransactionDto);
@@ -134,7 +134,7 @@ public class WalletServiceTest {
                                                      .amount(debitAmount).build();
         Wallet existingWallet = Wallet.builder().id(walletId).balance(walletBalance).build();
         // When cases
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(existingWallet));
+        when(walletRepository.findAndLockWalletById(walletId)).thenReturn(existingWallet);
         when(transactionRepository.findById(debitTransactionDto.getId())).thenReturn(Optional.empty());
         // Method call
         walletService.debitWallet(debitTransactionDto);
@@ -147,7 +147,7 @@ public class WalletServiceTest {
         assertEquals(debitTransactionDto.getAmount(), savedTransaction.getAmount());
         assertNotNull(savedTransaction.getDate());
         assertEquals(existingWallet, savedTransaction.getWallet());
-        verify(walletRepository, times(1)).findById(debitTransactionDto.getWalletId());
+        verify(walletRepository, times(1)).findAndLockWalletById(debitTransactionDto.getWalletId());
         verify(transactionRepository, times(1)).findById(debitTransactionDto.getId());
         verify(walletRepository, times(1)).save(existingWallet);
         verify(transactionRepository, times(1)).save(any());
@@ -161,7 +161,7 @@ public class WalletServiceTest {
         BigDecimal creditAmount = BigDecimal.valueOf(50);
         TransactionDto transactionDto = TransactionDto.builder().walletId(walletId).id(newTransactionId)
                                                       .amount(creditAmount).build();
-        when(walletRepository.findById(walletId)).thenReturn(Optional.empty());
+        when(walletRepository.findAndLockWalletById(walletId)).thenReturn(null);
         Exception e = assertThrows(BusinessLogicException.class, () -> {
             walletService.creditWallet(transactionDto);
         });
@@ -179,7 +179,7 @@ public class WalletServiceTest {
         TransactionDto creditTransactionDto = TransactionDto.builder().walletId(walletId).id(existingTransactionId)
                                                      .amount(creditAmount).build();
         Wallet existingWallet = Wallet.builder().id(walletId).balance(walletBalance).build();
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(existingWallet));
+        when(walletRepository.findAndLockWalletById(walletId)).thenReturn(existingWallet);
         Transaction existingTransaction =
                 Transaction.builder().id(existingTransactionId).amount(existingTransactionAmount).build();
         when(transactionRepository.findById(creditTransactionDto.getId())).thenReturn(Optional.of(existingTransaction));
@@ -204,7 +204,7 @@ public class WalletServiceTest {
                                                      .amount(creditAmount).build();
         Wallet existingWallet = Wallet.builder().id(walletId).balance(walletBalance).build();
         // When cases
-        when(walletRepository.findById(walletId)).thenReturn(Optional.of(existingWallet));
+        when(walletRepository.findAndLockWalletById(walletId)).thenReturn(existingWallet);
         when(transactionRepository.findById(creditTransactionDto.getId())).thenReturn(Optional.empty());
         // Method call
         walletService.creditWallet(creditTransactionDto);
@@ -217,7 +217,7 @@ public class WalletServiceTest {
         assertEquals(creditTransactionDto.getAmount(), savedTransaction.getAmount());
         assertNotNull(savedTransaction.getDate());
         assertEquals(existingWallet, savedTransaction.getWallet());
-        verify(walletRepository, times(1)).findById(creditTransactionDto.getWalletId());
+        verify(walletRepository, times(1)).findAndLockWalletById(creditTransactionDto.getWalletId());
         verify(transactionRepository, times(1)).findById(creditTransactionDto.getId());
         verify(walletRepository, times(1)).save(existingWallet);
         verify(transactionRepository, times(1)).save(any());

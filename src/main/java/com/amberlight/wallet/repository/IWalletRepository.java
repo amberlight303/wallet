@@ -8,7 +8,7 @@ import org.springframework.stereotype.Repository;
  * A repository for wallets.
  */
 @Repository
-public interface IWalletRepository extends CrudRepository<Wallet, Integer> {
+public interface IWalletRepository extends CrudRepository<Wallet, Integer>, IWalletRepositoryCustom {
 
     /**
      * Returns a wallet by a player id
